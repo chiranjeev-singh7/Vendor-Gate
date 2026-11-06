@@ -2,7 +2,10 @@ services:
   - type: web
     name: vendorgate
     runtime: docker
+    plan: free
     healthCheckPath: /health
     envVars:
       - key: STAGE_DELAY_MS
         value: "400"
+      - key: VENDORGATE_AUTOSEED
+        value: "true"

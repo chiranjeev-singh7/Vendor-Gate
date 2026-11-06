@@ -23,7 +23,7 @@ Choose a sample and select **Run process**. **Run all samples** pre-populates th
 
 ## Deploy to Render
 
-Push this folder to a Git repository, create a Render Web Service from the repository, and choose Docker runtime (or deploy `render.yaml`). Render builds the included Dockerfile and checks `/health`. Attach a persistent disk and set `VENDORGATE_DB` to a path on that disk to retain SQLite history across deploys.
+This repository includes a Render Blueprint in `render.yaml`. Push the project to GitHub, then in Render choose **New > Blueprint**, connect the repository and deploy the Blueprint. It creates a free Docker web service, checks `/health`, and enables sample auto-seeding. The Docker command listens on Render's `PORT` value. The service URL is shown on the Render dashboard after the deploy completes.
 
 ## Deploying on Render free tier
 
