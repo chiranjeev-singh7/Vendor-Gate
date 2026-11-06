@@ -1,0 +1,17 @@
+thresholds:
+  name_match: 0.92
+  name_borderline: 0.75
+  stage_delay_ms: 400
+required_documents:
+  company: [incorporation_certificate, tax_certificate, bank_letter]
+  individual: [tax_certificate, bank_letter]
+tax_document_by_type:
+  EIN: w9
+  GSTIN: gst_certificate
+high_risk_countries: [KP, IR, SY]
+rules:
+  R-CONTACT-01: "Contact email domain differs from company website; request confirmation of authorized contact."
+  R-CONTACT-02: "Company contact uses Gmail, Yahoo, Outlook, or Hotmail; request a company email address."
+  R-DOC-02: "Document issuing country differs from the claimed vendor country; request country-consistent evidence."
+*** Add File: C:/Users/Chiranjeev Singh/Desktop/New folder (4)/data/sanctions_mock.json
+["Fake Sanctioned Holdings Ltd", "Example Restricted Trading GmbH"]

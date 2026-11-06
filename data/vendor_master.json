@@ -1,0 +1,10 @@
+[
+ {"legal_name":"Orion Supplies GmbH","country":"DE","tax_id":"DE123456789","bank_ref":"GB82WEST12345698765432"},
+ {"legal_name":"Acme Industrial LLC","country":"US","tax_id":"12-1111111","bank_ref":"US123456789"},
+ {"legal_name":"Cedar Works Ltd","country":"GB","tax_id":"GB123456789","bank_ref":"GB29NWBK60161331926811"},
+ {"legal_name":"Lotus Components Pvt Ltd","country":"IN","tax_id":"ABCDE1234F","bank_ref":"IN0000000001"},
+ {"legal_name":"Hansa Logistics GmbH","country":"DE","tax_id":"DE987654321","bank_ref":"DE0000000002"},
+ {"legal_name":"Pacific Paper Inc","country":"US","tax_id":"98-1111111","bank_ref":"US987654321"},
+ {"legal_name":"Crownstone Consulting Ltd","country":"GB","tax_id":"GB987654321","bank_ref":"GB0000000003"},
+ {"legal_name":"Meridian Textiles Pvt Ltd","country":"IN","tax_id":"FGHIJ5678K","bank_ref":"IN0000000004"}
+]

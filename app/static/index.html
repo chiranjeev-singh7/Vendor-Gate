@@ -1,0 +1,63 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f6f7f9">
+  <title>VendorGate · Vendor operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="mobile-bar"><button id="menu-open" class="icon-button" aria-label="Open navigation" aria-expanded="false"></button><a class="wordmark" href="#new"><span class="brand-mark" aria-hidden="true"></span>VendorGate</a><span class="mobile-spacer"></span></div>
+  <div class="app-shell">
+    <aside id="sidebar" class="sidebar" aria-label="Main navigation">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>VendorGate</span></div>
+      <nav class="nav-list">
+        <button class="nav-item is-active" data-page="new" aria-current="page"><span class="icon" data-icon="plus-square"></span><span>New submission</span></button>
+        <button class="nav-item" data-page="live"><span class="icon" data-icon="activity"></span><span>Live run</span><span id="live-nav-dot" class="nav-dot hidden"></span></button>
+        <button class="nav-item" data-page="dashboard"><span class="icon" data-icon="layout-dashboard"></span><span>Dashboard</span></button>
+        <button class="nav-item" data-page="rules"><span class="icon" data-icon="book-open"></span><span>Rules</span></button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="engine-chip"><span class="dot dot-green"></span><span>Rule-based engine</span><span class="engine-version">v1.0</span></div>
+        <button id="reset-demo" class="button button-ghost reset-button"><span class="icon" data-icon="rotate-ccw"></span>Reset demo data</button>
+      </div>
+    </aside>
+
+    <main id="main" class="main-content">
+      <section id="page-new" class="page" aria-labelledby="title-new">
+        <header class="page-header"><div><p class="eyebrow">VENDOR OPERATIONS</p><h1 id="title-new">New submission</h1><p class="page-description">Run a vendor through the onboarding checks.</p></div><div class="header-actions"><button id="run-all" class="button button-secondary"><span class="icon" data-icon="play"></span>Run all samples</button></div></header>
+        <section class="section-block" aria-labelledby="samples-heading"><div class="section-heading"><div><h2 id="samples-heading">Try a sample</h2><p>Choose a case to explore the review process.</p></div><span id="sample-count" class="subtle-label"></span></div><div id="sample-grid" class="sample-grid"></div></section>
+        <div class="submission-toolbar"><div class="tab-list" role="tablist" aria-label="Submission editor"><button id="tab-form" class="tab-button is-selected" role="tab" aria-selected="true" aria-controls="panel-form">Fill form</button><button id="tab-json" class="tab-button" role="tab" aria-selected="false" aria-controls="panel-json">Advanced JSON</button></div><div id="json-validity" class="json-validity hidden" aria-live="polite"></div></div>
+        <section id="panel-form" class="editor-panel" role="tabpanel" aria-labelledby="tab-form"><div id="form-cards" class="form-grid"></div></section>
+        <section id="panel-json" class="editor-panel hidden" role="tabpanel" aria-labelledby="tab-json"><div class="card editor-card"><div class="card-heading"><div><h2>Submission JSON</h2><p>Use the full submission shape. Changes sync to the form.</p></div><button id="format-json" class="button button-secondary button-small"><span class="icon" data-icon="align-left"></span>Format</button></div><label class="sr-only" for="json-editor">Submission JSON</label><textarea id="json-editor" class="code-editor" spellcheck="false" aria-describedby="json-validity"></textarea></div></section>
+        <div class="action-spacer"></div><div class="sticky-action"><div class="sticky-inner"><button id="reset-form" class="button button-secondary"><span class="icon" data-icon="rotate-ccw"></span>Reset</button><button id="run-process" class="button button-primary"><span class="icon" data-icon="play"></span><span>Run process</span></button></div></div>
+      </section>
+
+      <section id="page-live" class="page hidden" aria-labelledby="title-live">
+        <header class="page-header"><div><p class="eyebrow">PROCESS MONITOR</p><h1 id="title-live">Live run</h1><p class="page-description">Follow each verification as it happens.</p></div><div class="header-actions"><button class="button button-secondary go-new"><span class="icon" data-icon="plus"></span>New submission</button></div></header>
+        <div id="live-content"></div>
+      </section>
+
+      <section id="page-dashboard" class="page hidden" aria-labelledby="title-dashboard">
+        <header class="page-header"><div><p class="eyebrow">OVERVIEW</p><h1 id="title-dashboard">Dashboard</h1><p class="page-description">Monitor decisions, review workload, and recent runs.</p></div><div class="header-actions"><button id="dashboard-refresh" class="button button-secondary"><span class="icon" data-icon="refresh-cw"></span>Refresh</button></div></header>
+        <div id="dashboard-kpis" class="kpi-grid"></div>
+        <div class="chart-grid"><section class="card chart-card"><div class="card-heading"><div><h2>Status distribution</h2><p>Decisions across all runs</p></div></div><div id="status-chart" class="chart-area"></div></section><section class="card chart-card"><div class="card-heading"><div><h2>Runs over time</h2><p>Recent processing volume</p></div></div><div id="time-chart" class="chart-area"></div></section></div>
+        <section class="card runs-card"><div class="runs-toolbar"><div><h2>All runs</h2><p id="runs-caption">Search and review vendor decisions.</p></div><div class="filters"><label class="search-field"><span class="icon" data-icon="search"></span><span class="sr-only">Search vendor, country, or reason</span><input id="run-search" type="search" placeholder="Search vendors…"></label><div id="status-filters" class="filter-pills" role="group" aria-label="Filter by status"></div></div></div><div id="runs-content"></div><div id="pagination" class="pagination hidden"></div></section>
+      </section>
+
+      <section id="page-rules" class="page hidden" aria-labelledby="title-rules">
+        <header class="page-header"><div><p class="eyebrow">POLICY REFERENCE</p><h1 id="title-rules">Review rules</h1><p class="page-description">A transparent guide to how VendorGate routes each submission.</p></div></header>
+        <div id="decision-map" class="decision-map"></div><div id="rules-groups" class="rules-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="drawer-backdrop" class="drawer-backdrop hidden"></div><aside id="run-drawer" class="run-drawer" aria-label="Run details" aria-hidden="true"><div id="drawer-content"></div></aside>
+  <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <div id="mobile-overlay" class="mobile-overlay hidden"></div>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

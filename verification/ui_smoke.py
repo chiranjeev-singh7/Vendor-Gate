@@ -1,0 +1,30 @@
+from playwright.sync_api import sync_playwright
+import sys
+sys.stdout.reconfigure(encoding='utf-8')
+
+errors=[]
+with sync_playwright() as p:
+    browser=p.chromium.launch(headless=True)
+    page=browser.new_page(viewport={'width':1440,'height':1000})
+    page.on('console',lambda m:errors.append(f'{m.type}: {m.text}') if m.type=='error' else None)
+    page.on('pageerror',lambda e:errors.append(e.stack))
+    page.goto('http://127.0.0.1:8000',wait_until='networkidle')
+    page.wait_for_selector('.sample-card')
+    print('samples',page.locator('.sample-card').count(),'form inputs',page.locator('#form-cards input').count())
+    page.locator('.sample-card[data-sample="happy_path_clean"]').click()
+    print('after sample click errors',errors)
+    print('selected',page.locator('.sample-card[data-sample="happy_path_clean"]').get_attribute('aria-pressed'),'legal',page.locator('[data-path="legal_name"]').input_value(),'json',page.locator('#json-editor').input_value()[:100])
+    page.locator('#run-process').click()
+    page.wait_for_selector('.decision-card',timeout=20000)
+    print('decision',page.locator('.decision-card').inner_text()[:500])
+    page.locator('[data-page="dashboard"]').click()
+    page.wait_for_timeout(500)
+    print('dashboard',page.locator('#runs-content').inner_text()[:500])
+    page.locator('[data-page="rules"]').click()
+    print('rules',page.locator('#rules-groups .rules-card').count())
+    print('errors',errors)
+    page.set_viewport_size({'width':375,'height':812})
+    page.locator('[data-page="new"]').click()
+    page.wait_for_timeout(200)
+    print('mobile overflow',page.evaluate('document.documentElement.scrollWidth > document.documentElement.clientWidth'))
+    browser.close()

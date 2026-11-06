@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: vendorgate
+    runtime: docker
+    healthCheckPath: /health
+    envVars:
+      - key: STAGE_DELAY_MS
+        value: "400"
