@@ -123,6 +123,8 @@ def process(payload, delay_ms=0, on_stage=None):
  if len(requests)>1 and generic_request in requests:requests.remove(generic_request)
  if status=='APPROVED':
   vendor_message='Welcome to VendorGate. Your vendor profile is approved. We will contact you with onboarding next steps.'
+ elif status=='REJECTED':
+  vendor_message='Thank you for applying. We are unable to complete your onboarding at this time. If you believe this is an error, please contact our procurement team.'
  else:
   intro='We need the following information to complete your verification:'
   if status=='PENDING':

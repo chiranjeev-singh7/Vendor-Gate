@@ -38,9 +38,32 @@ def test_vendor_messages_never_expose_internal_terms(tmp_path,monkeypatch):
  for name,payload in SAMPLES.items():
   result=process(payload)['result'];message=result['vendor_message'].lower()
   assert not any(term in message for term in forbidden),name
-  if result['status']!='APPROVED':
+  if result['status']=='PENDING':
    bullets=[line for line in result['vendor_message'].splitlines() if line.startswith('• ')]
    assert bullets and len(bullets)==len(set(bullets)),name
+
+def test_samples_use_company_contact_domains_except_mismatch_case():
+ from urllib.parse import urlparse
+ by_vendor={}
+ for name,payload in SAMPLES.items():
+  email_domain=payload['contact']['email'].rsplit('@',1)[-1].lower()
+  website_domain=urlparse(payload['contact']['website']).hostname.lower().removeprefix('www.')
+  if name=='edge_email_domain_mismatch':
+   assert email_domain=='gmail.com' and email_domain!=website_domain
+  else:
+   assert email_domain==website_domain,name
+   assert payload['contact']['email']!='alex@brightstar.example'
+  previous=by_vendor.setdefault(payload['legal_name'],(email_domain,website_domain))
+  assert previous==(email_domain,website_domain),name
+
+def test_rejected_message_is_neutral_but_internal_note_keeps_reasoning(tmp_path,monkeypatch):
+ from app import db
+ monkeypatch.setattr(db,'DB',str(tmp_path/'rejected-message.db'))
+ result=process(SAMPLES['edge_duplicate_bank_account'])['result']
+ assert result['status']=='REJECTED'
+ assert result['vendor_message']=='Thank you for applying. We are unable to complete your onboarding at this time. If you believe this is an error, please contact our procurement team.'
+ assert not any(term in result['vendor_message'].lower() for term in ('duplicate','fraud','other vendor','r-','recorded rules'))
+ assert 'R-FRAUD-01' in result['internal_note'] and 'Orion Supplies GmbH' in result['internal_note']
 
 def test_pending_vendor_message_uses_calendar_deadline_and_unique_bullets(tmp_path,monkeypatch):
  from datetime import date,timedelta
