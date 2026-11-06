@@ -65,6 +65,15 @@ def test_rejected_message_is_neutral_but_internal_note_keeps_reasoning(tmp_path,
  assert not any(term in result['vendor_message'].lower() for term in ('duplicate','fraud','other vendor','r-','recorded rules'))
  assert 'R-FRAUD-01' in result['internal_note'] and 'Orion Supplies GmbH' in result['internal_note']
 
+def test_wrong_country_tax_id_message_names_expected_id_and_format(tmp_path,monkeypatch):
+ from app import db
+ monkeypatch.setattr(db,'DB',str(tmp_path/'wrong-country-tax.db'))
+ result=process(SAMPLES['edge_wrong_taxid_country'])['result']
+ message=result['vendor_message']
+ assert result['status']=='PENDING'
+ assert 'USt-IdNr' in message and 'DE' in message and '9 digits' in message
+ assert 'EIN for the vendor\'s country' not in message
+
 def test_pending_vendor_message_uses_calendar_deadline_and_unique_bullets(tmp_path,monkeypatch):
  from datetime import date,timedelta
  from app import db

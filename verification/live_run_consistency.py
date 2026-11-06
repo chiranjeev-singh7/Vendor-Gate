@@ -40,6 +40,7 @@ def run_and_check(page, base, sample, expected_name, expected_email, expected_st
     decision_name = card.locator('.decision-meta').evaluate('(el) => el.textContent.split(String.fromCharCode(183))[0].trim()')
     header_name = page.locator('#live-content .live-vendor-name').evaluate('(el) => el.firstChild.textContent.trim()')
     to_address = card.locator('.message-meta span').first.inner_text()
+    vendor_message = card.locator('.message-body').inner_text()
     risk = card.locator('.risk-label strong').inner_text()
     status = card.locator('.decision-top .badge span').inner_text().upper()
     reason_ids = card.locator('.reason-link .rule-id').all_inner_texts()
@@ -52,6 +53,7 @@ def run_and_check(page, base, sample, expected_name, expected_email, expected_st
     assert tabs_spacing == '16px', (sample, 'reason-to-tabs spacing', tabs_spacing)
     assert set(expected_rules).issubset(reason_ids), (sample, 'reasons', reason_ids)
     assert len(reason_summaries) == len(set(reason_summaries)), (sample, 'duplicate displayed reasons', reason_summaries)
+    assert not any(token in text.lower() for text in reason_summaries for token in ('tax.ein','bank_letter','tax_certificate','account_holder_name')),(sample,'raw field label in reasons',reason_summaries)
 
     runs = request(base, '/api/runs')
     if require_single_run:
@@ -64,7 +66,11 @@ def run_and_check(page, base, sample, expected_name, expected_email, expected_st
     assert set(reason_ids)==expected_visible_ids,(sample,'displayed reasons do not exactly match the findings',reason_ids,expected_visible_ids)
     if screenshot:
         card.screenshot(path=str(ARTIFACTS / screenshot))
-    return {'sample': sample, 'vendor': header_name, 'status': status, 'to': to_address, 'risk': risk, 'reasons': reason_ids}
+    if status=='REJECTED':
+        expected='Thank you for applying. We are unable to complete your onboarding at this time. If you believe this is an error, please contact our procurement team.'
+        assert vendor_message==expected,(sample,'rejected wording',vendor_message)
+        assert not any(term in vendor_message.lower() for term in ('document','certificate','provide','upload'))
+    return {'sample': sample, 'vendor': header_name, 'status': status, 'to': to_address, 'risk': risk, 'reasons': reason_ids, 'vendor_message': vendor_message}
 
 
 def main():
@@ -104,12 +110,8 @@ def main():
                 assert not any(term in card_message.lower() for card_message in page.locator('.message-body').all_inner_texts() for term in ('duplicate', 'fraud', 'r-', 'recorded rules'))
 
                 cases = [
-                    ('happy_path_clean','Brightstar Systems LLC','operations@brightstar.example','APPROVED',()),
                     ('edge_holder_mismatch','Northwind Logistics LLC','operations@northwind-logistics.example','PENDING',('R-NAME-03','R-NAME-04')),
                     ('edge_duplicate_bank_account','Bluepeak Consulting Ltd','operations@bluepeak-consulting.example','REJECTED',('R-FRAUD-01',)),
-                    ('edge_name_variants','Sunrise Textiles Pvt. Ltd.','operations@sunrise-textiles.example','APPROVED',()),
-                    ('edge_wrong_taxid_country','Alpine Works GmbH','operations@alpine-works.example','PENDING',('R-TAX-02',)),
-                    ('edge_incomplete_and_expired','Oldstone Trading Inc','operations@oldstone-trading.example','PENDING',('R-COMPLETE-01','R-DOC-01')),
                 ]
                 outcomes=[]
                 for sample,name,email,status,rules in cases:

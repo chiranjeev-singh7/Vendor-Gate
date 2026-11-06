@@ -95,7 +95,24 @@ def process(payload, delay_ms=0, on_stage=None):
      request(f'Please provide your {kind}.')
     elif entry:request(f'Please provide the vendor {entry.replace("_"," ")} field.')
   elif rule=='R-TAX-02':
-   request(f"Please provide a valid {typ or 'tax identifier'} for the vendor's country.")
+   tax_formats={
+    'DE':('German VAT ID (USt-IdNr)','format DE followed by 9 digits, e.g. DE123456789'),
+    'US':('EIN','format XX-XXXXXXX'),
+    'IN':('PAN (AAAAA9999A) and GSTIN (15 characters)',''),
+    'GB':('VAT number','format GB followed by 9 or 12 digits'),
+   }
+   submitted_types={'EIN':('US','US EIN'),'PAN':('IN','Indian PAN'),'GSTIN':('IN','Indian GSTIN')}
+   expected=tax_formats.get(country)
+   if expected:
+    expected_name,expected_format=expected
+    requested=f'{expected_name}{", "+expected_format if expected_format else ""}'
+    submitted=submitted_types.get(typ)
+    if submitted and submitted[0]!=country:
+     request(f"The ID provided is a {submitted[1]}, but we need the {requested}.")
+    else:
+     request(f'Please provide the {requested}.')
+   else:
+    request(f"Please provide the expected country-specific tax ID and format for {country or 'the vendor country'}.")
   elif rule=='R-BANK-01':
    request('Please review and correct the bank details so we can verify the payment account.')
   elif rule=='R-NAME-03':
