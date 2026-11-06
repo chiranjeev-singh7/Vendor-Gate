@@ -24,9 +24,6 @@ def health(): return {'status':'ok'}
 def reset_demo_data():
  c=db.connect(); c.execute('DELETE FROM events'); c.execute('DELETE FROM runs'); c.execute('DELETE FROM vendors'); c.commit(); c.close()
  db.init_db(); QUEUES.clear()
- if os.getenv('VENDORGATE_AUTOSEED','false').lower()=='true':
-  for payload in SAMPLES.values():
-   rec=process(payload,0); db.save_run(rec,rec['events'])
  return {'status':'reset','runs':db.run_count()}
 @app.get('/api/samples')
 def samples(): return SAMPLES

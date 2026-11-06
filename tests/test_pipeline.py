@@ -98,3 +98,15 @@ def test_admin_reset_restores_seed_and_happy_path(tmp_path,monkeypatch):
   assert reset=={'status':'reset','runs':0}
   rerun=client.post('/api/runs',json=SAMPLES['happy_path_clean']).json()
   assert rerun['result']['status']=='APPROVED'
+
+def test_admin_reset_stays_empty_when_autoseed_is_enabled(tmp_path,monkeypatch):
+ from app import db
+ from app.main import app
+ from fastapi.testclient import TestClient
+ monkeypatch.setattr(db,'DB',str(tmp_path/'reset-autoseed.db'))
+ monkeypatch.setenv('VENDORGATE_AUTOSEED','true')
+ with TestClient(app) as client:
+  assert len(client.get('/api/runs').json())==len(SAMPLES)
+  reset=client.post('/api/admin/reset').json()
+  assert reset=={'status':'reset','runs':0}
+  assert client.get('/api/runs').json()==[]

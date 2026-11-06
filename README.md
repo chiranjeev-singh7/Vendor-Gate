@@ -27,7 +27,7 @@ This repository includes a Render Blueprint in `render.yaml`. Push the project t
 
 ## Deploying on Render free tier
 
-The free web service filesystem is ephemeral: SQLite history can reset when the service is restarted or redeployed. Enable `VENDORGATE_AUTOSEED=true` in the Render environment to repopulate the dashboard with sample runs after a reset. Auto-seeding runs only when the runs table is empty and does not add duplicate sample runs to a non-empty history. Use a paid persistent disk/service plan if you need durable vendor and audit history; auto-seed is demo data, not a backup.
+The free web service filesystem is ephemeral: SQLite history can reset when the service is restarted, redeployed, or spun down. `VENDORGATE_AUTOSEED=true` seeds the sample runs at startup only when the runs table is empty. The **Reset demo data** button clears the current run history and leaves the dashboard empty; if the server later restarts while auto-seed is enabled, the samples will be seeded again. Use a paid persistent disk/service plan if you need durable vendor and audit history; auto-seed is demo data, not a backup.
 
 The seeded set includes the six original cases, the corrected resubmission, and the contact-domain warning case. Turn auto-seed off by removing the environment variable or setting it to `false`.
 
